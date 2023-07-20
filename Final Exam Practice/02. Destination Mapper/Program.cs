@@ -1,13 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 string input = Console.ReadLine();
-string pattern = @"(=|/)([A-Z][A-Za-z]{2,})\1";
-MatchCollection collection = Regex.Matches(input, pattern);
-List<string> destinations = new List<string>();
+string pattern = @"(=|/)(?<destination>[A-Z][A-Za-z]{2,})\1";
+MatchCollection destinations = Regex.Matches(input, pattern);
 int travelPoints = 0;
-foreach (Match destination in collection)
+foreach (Match place in destinations)
 {
-    travelPoints += destination.Groups[2].Length;
-    destinations.Add(destination.Groups[2].Value);
+    travelPoints += place.Groups["destination"].Length;
 }
-Console.WriteLine($"Destinations: {string.Join(", ", destinations)}");
+Console.WriteLine($"Destinations: {string.Join(", ", destinations.Select(x => x.Groups["destination"]))}");
 Console.WriteLine($"Travel Points: {travelPoints}");
