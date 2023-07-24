@@ -1,34 +1,32 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 string input = Console.ReadLine();
-string pattern = @"(@|#)(?<normal>[A-Za-z]{3,})\1\1(?<reversed>[A-Za-z]{3,})\1";
-MatchCollection collection = Regex.Matches(input, pattern);
-List<string> pairCollection = new List<string>();
-int pairs = collection.Count;
-string matchingPairs = string.Empty;
-foreach (Match pair in collection)
+List<string> mirrorWords = new List<string>();
+string pattern = @"(@|#)(?<firstWord>[A-Za-z]{3,})\1{2}(?<secondWord>[A-Za-z]{3,})\1";
+MatchCollection matches = Regex.Matches(input, pattern);
+foreach (Match pair in matches)
 {
-    string reversed = string.Concat(pair.Groups["normal"].Value.Reverse());
-    if (reversed == pair.Groups["reversed"].Value)
+    string reversed = string.Concat(pair.Groups["secondWord"].Value.Reverse());
+    if (pair.Groups["firstWord"].Value == reversed)
     {
-        matchingPairs = $"{pair.Groups["normal"]} <=> {pair.Groups["reversed"]}";
-        pairCollection.Add(matchingPairs);
+        string mirrorMatch = $"{pair.Groups["firstWord"].Value} <=> {pair.Groups["secondWord"].Value}";
+        mirrorWords.Add(mirrorMatch);
     }
 }
-if (pairs == 0)
+if (matches.Count == 0)
 {
-
     Console.WriteLine("No word pairs found!");
 }
 else
 {
-    Console.WriteLine($"{pairs} word pairs found!");
+    Console.WriteLine($"{matches.Count} word pairs found!");
 }
-if (pairCollection.Count > 0)
+if (mirrorWords.Count == 0)
 {
-    Console.WriteLine("The mirror words are:");
-    Console.Write(string.Join(", ", pairCollection));
+    Console.WriteLine("No mirror words!");
 }
 else
 {
-    Console.WriteLine("No mirror words!");
+    Console.WriteLine("The mirror words are:");
+    Console.WriteLine(string.Join(", ", mirrorWords));
 }
