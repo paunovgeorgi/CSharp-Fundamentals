@@ -1,85 +1,82 @@
-﻿int n = int.Parse(Console.ReadLine());
-var heroes = new Dictionary<string, HeroStats>();
-for (int i = 0; i < n; i++)
+int numOfHeroes = int.Parse(Console.ReadLine());
+Dictionary<string, HeroStats> heroes = new Dictionary<string, HeroStats>();
+for (int i = 0; i < numOfHeroes; i++)
 {
-    string[] input = Console.ReadLine().Split();
-    string name = input[0];
-    double hp = double.Parse(input[1]);
-    double mp = double.Parse(input[2]);
+    string[] heroList = Console.ReadLine().Split();
+    string name = heroList[0];
+    int hp = int.Parse(heroList[1]);
+    int mp = int.Parse(heroList[2]);
     heroes.Add(name, new HeroStats(hp, mp));
 }
-string commands;
-while ((commands = Console.ReadLine())!= "End")
+string input;
+while ((input = Console.ReadLine()) != "End")
 {
-    string[] arguments = commands.Split(" - ");
+    string[] arguments = input.Split(" - ");
     string command = arguments[0];
     switch (command)
     {
         case "CastSpell":
-            string currentHero = arguments[1];
-            double neededMp = double.Parse(arguments[2]);
-            string spellName = arguments[3];
-            if (heroes[currentHero].Mp >= neededMp)
+            string hero = arguments[1];
+            int mp = int.Parse(arguments[2]);
+            string spell = arguments[3];
+            if (heroes[hero].Mp >= mp)
             {
-                heroes[currentHero].Mp -= neededMp;
-                Console.WriteLine($"{currentHero} has successfully cast {spellName} and now has {heroes[currentHero].Mp} MP!");
+                heroes[hero].Mp -= mp;
+                Console.WriteLine($"{hero} has successfully cast {spell} and now has {heroes[hero].Mp} MP!");
             }
             else
             {
-                Console.WriteLine($"{currentHero} does not have enough MP to cast {spellName}!");
+                Console.WriteLine($"{hero} does not have enough MP to cast {spell}!");
             }
             break;
         case "TakeDamage":
-            currentHero = arguments[1];
-            double damage = double.Parse(arguments[2]);
+            hero = arguments[1];
+            int damage = int.Parse(arguments[2]);
             string attacker = arguments[3];
-            heroes[currentHero].Hp -= damage;
-            if (heroes[currentHero].Hp > 0)
+            heroes[hero].Hp -= damage;
+            if (heroes[hero].Hp > 0)
             {
-                Console.WriteLine($"{currentHero} was hit for {damage} HP by {attacker} and now has {heroes[currentHero].Hp} HP left!");
+                Console.WriteLine($"{hero} was hit for {damage} HP by {attacker} and now has {heroes[hero].Hp} HP left!");
             }
             else
             {
-                Console.WriteLine($"{currentHero} has been killed by {attacker}!");
-                heroes.Remove(currentHero);
+                Console.WriteLine($"{hero} has been killed by {attacker}!");
+                heroes.Remove(hero);
             }
             break;
         case "Recharge":
-            currentHero = arguments[1];
-            double amount = double.Parse(arguments[2]);
-            if (heroes[currentHero].Mp + amount > 200)
+            hero = arguments[1];
+            int amount = int.Parse(arguments[2]);
+            if (heroes[hero].Mp + amount > 200)
             {
-                amount = 200 - heroes[currentHero].Mp;
+                amount = 200 - heroes[hero].Mp;
             }
-            heroes[currentHero].Mp += amount;
-            Console.WriteLine($"{currentHero} recharged for {amount} MP!");
+            heroes[hero].Mp += amount;
+            Console.WriteLine($"{hero} recharged for {amount} MP!");
             break;
         case "Heal":
-            currentHero = arguments[1];
-            amount = double.Parse(arguments[2]);
-            if (heroes[currentHero].Hp + amount > 100)
+            hero = arguments[1];
+            amount = int.Parse(arguments[2]);
+            if (heroes[hero].Hp + amount > 100)
             {
-                amount = 100 - heroes[currentHero].Hp;
+                amount = 100 - heroes[hero].Hp;
             }
-            heroes[currentHero].Hp += amount;
-            Console.WriteLine($"{currentHero} healed for {amount} HP!");
+            heroes[hero].Hp += amount;
+            Console.WriteLine($"{hero} healed for {amount} HP!");
             break;
     }
 }
 foreach (var hero in heroes)
 {
-    Console.WriteLine(hero.Key);
-    Console.WriteLine($"  HP: {hero.Value.Hp}");
-    Console.WriteLine($"  MP: {hero.Value.Mp}");
+    Console.WriteLine($"{hero.Key} \n  HP: {hero.Value.Hp} \n  MP: {hero.Value.Mp}");
 }
 public class HeroStats
 {
-    public HeroStats(double hp, double mp)
+    public HeroStats(int hp, int mp)
     {
         Hp = hp;
         Mp = mp;
     }
-
-    public double Hp { get; set; }
-    public double Mp { get; set; }
+    public int Hp { get; set; }
+    public int Mp { get; set; }
 }
