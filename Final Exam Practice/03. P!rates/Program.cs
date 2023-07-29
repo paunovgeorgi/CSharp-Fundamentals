@@ -1,79 +1,74 @@
-﻿using System.Security.Cryptography;
-var cities = new Dictionary<string, CityInfo>();
-string initialInput;
-while ((initialInput = Console.ReadLine())!="Sail")
+﻿string initialInput;
+var cities = new Dictionary<string, CityStats>();
+while ((initialInput = Console.ReadLine())!= "Sail")
 {
-string[] info = initialInput.Split("||");
-string name = info[0];
-double population = double.Parse(info[1]);
-double gold = double.Parse(info[2]);
-if (cities.ContainsKey(name))
-{
-    cities[name].Population += population;
-    cities[name].Gold += gold;
+    string[] inputData = initialInput.Split("||");
+    string city = inputData[0];
+    int population = int.Parse(inputData[1]);
+    int gold = int.Parse(inputData[2]);
+    if (cities.ContainsKey(city))
+    {
+        cities[city].Population += population;
+        cities[city].Gold += gold;
+    }
+    else
+    {
+        cities.Add(city, new CityStats(population, gold));
+    }
 }
-else
+string secondaryInput;
+while ((secondaryInput = Console.ReadLine()) != "End")
 {
-    cities.Add(name, new CityInfo(population, gold));
-}
-}
-
-string events;
-while ((events = Console.ReadLine())!="End")
-{
-    string[] arguments = events.Split("=>");
+    string[] arguments = secondaryInput.Split("=>");
     string command = arguments[0];
     switch (command)
     {
         case "Plunder":
             string town = arguments[1];
             int people = int.Parse(arguments[2]);
-            double gold = double.Parse(arguments[3]);
-            Console.WriteLine($"{town} plundered! {gold} gold stolen, {people} citizens killed.");
+            int gold = int.Parse(arguments[3]);
             cities[town].Population -= people;
             cities[town].Gold -= gold;
-            if (cities[town].Gold <= 0 || cities[town].Population <= 0)
+            Console.WriteLine($"{town} plundered! {gold} gold stolen, {people} citizens killed.");
+            if (cities[town].Population <= 0 || cities[town].Gold <= 0)
             {
-                cities.Remove(town);
                 Console.WriteLine($"{town} has been wiped off the map!");
+                cities.Remove(town);
             }
             break;
         case "Prosper":
             town = arguments[1];
-            gold = double.Parse(arguments[2]);
-            if (gold >= 0)
+            gold = int.Parse(arguments[2]);
+            if (gold < 0)
             {
-                cities[town].Gold += gold;
-                Console.WriteLine($"{gold} gold added to the city treasury. {town} now has {cities[town].Gold} gold.");
+                Console.WriteLine("Gold added cannot be a negative number!");
+                continue;
             }
-            else
-            {
-                Console.WriteLine("Gold added cannot be a negative number!");    
-            }
+            cities[town].Gold += gold;
+            Console.WriteLine($"{gold} gold added to the city treasury. {town} now has {cities[town].Gold} gold.");
             break;
     }
 }
-
-if (cities.Count <= 0)
+if (cities.Count == 0)
 {
     Console.WriteLine("Ahoy, Captain! All targets have been plundered and destroyed!");
 }
 else
 {
     Console.WriteLine($"Ahoy, Captain! There are {cities.Count} wealthy settlements to go to:");
-    foreach (var city in cities)
+    foreach (var town in cities)
     {
-        Console.WriteLine($"{city.Key} -> Population: {city.Value.Population} citizens, Gold: {city.Value.Gold} kg");
+        Console.WriteLine($"{town.Key} -> Population: {town.Value.Population} citizens, Gold: {town.Value.Gold} kg");
     }
 }
-public class CityInfo
+public class CityStats
 {
-    public CityInfo(double population, double gold)
+    public CityStats(int population, int gold)
     {
         Population = population;
         Gold = gold;
     }
 
-    public double Population { get; set; }
-    public double Gold { get; set; }
+    public int Population { get; set; }
+    public int Gold { get; set; }
 }
